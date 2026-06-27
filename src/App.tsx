@@ -132,36 +132,27 @@ type LogoBackground = "white" | "nonWhite";
 
 function LogoLockup({
   background = "white",
-  light,
   scale = 1.5,
 }: {
   background?: LogoBackground;
-  light?: boolean; // compat: light=false equivale a fondo no blanco
   scale?: number;
 }) {
-  const [failed, setFailed] = useState(false);
-  const bg: LogoBackground = light === false ? "nonWhite" : background;
   const logoSrc =
-    bg === "white"
+    background === "white"
       ? "/GF-Logo-Horizontal-Calado.png"
       : "/GF-Logo-Horizontal-Fondo-Calado.png";
-  const fg = bg === "white" ? "#ffffff" : C.blue;
 
-  // Respaldo: si el PNG no está en public/, muestra el wordmark en texto
-  if (failed) {
-    return (
-      <span style={{ color: fg, fontWeight: 800, letterSpacing: 3, fontSize: 13 * scale }}>
-        GOLD&nbsp;&nbsp;FIELDS
-      </span>
-    );
-  }
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
         src={logoSrc}
         alt="Gold Fields"
-        onError={() => setFailed(true)}
-        style={{ height: 34 * scale, width: "auto", display: "block", objectFit: "contain" }}
+        style={{
+          height: 34 * scale,
+          width: "auto",
+          display: "block",
+          objectFit: "contain",
+        }}
       />
     </div>
   );
@@ -267,7 +258,7 @@ function Masthead({ tab }: { tab:string }) {
       <div style={{ position:"absolute", inset:10, border:"1px solid rgba(255,255,255,.4)", borderTopLeftRadius:26, pointerEvents:"none" }} />
       <div style={{ position:"relative", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
         <div>
-          <LogoLockup background="nonWhite" light=false/>
+          <LogoLockup background="nonWhite" />
           <div style={{ fontFamily:"'Segoe Script','Brush Script MT',cursive", color:C.gold, fontSize:20, marginTop:14 }}>{script}</div>
           <div style={{ color:"#fff", fontWeight:800, fontSize:24, lineHeight:1.1 }}>{title}</div>
         </div>
@@ -360,7 +351,7 @@ function Certificado({ m, onClose }: { m:Material; onClose:()=>void }) {
       <div onClick={(e)=>e.stopPropagation()} style={{ background:"#fff", width:"min(560px,100%)", borderRadius:16, overflow:"hidden", position:"relative" }}>
         <div style={{ position:"absolute", inset:14, border:"2px solid "+C.gold, borderTopLeftRadius:18, pointerEvents:"none" }} />
         <div style={{ padding:"28px 30px", textAlign:"center" }}>
-          <LogoLockup light={false} />
+          <LogoLockup/>
           <div style={{ fontFamily:"'Segoe Script','Brush Script MT',cursive", color:C.gold, fontSize:22, marginTop:18 }}>Certificado de reciclaje</div>
           <div style={{ color:C.blue, fontWeight:800, fontSize:20, marginTop:2 }}>{m.name}</div>
           <p style={{ color:C.ink, fontSize:13, marginTop:16, lineHeight:1.5 }}>
