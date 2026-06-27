@@ -267,7 +267,7 @@ function Masthead({ tab }: { tab:string }) {
       <div style={{ position:"absolute", inset:10, border:"1px solid rgba(255,255,255,.4)", borderTopLeftRadius:26, pointerEvents:"none" }} />
       <div style={{ position:"relative", display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, flexWrap:"wrap" }}>
         <div>
-          <LogoLockup background="nonWhite" />
+          <LogoLockup background="nonWhite" light=false/>
           <div style={{ fontFamily:"'Segoe Script','Brush Script MT',cursive", color:C.gold, fontSize:20, marginTop:14 }}>{script}</div>
           <div style={{ color:"#fff", fontWeight:800, fontSize:24, lineHeight:1.1 }}>{title}</div>
         </div>
