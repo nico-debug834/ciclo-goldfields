@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
 
 /*
   CICLO · Gold Fields — Demo de visualización de economía circular (Salares Norte).
@@ -131,27 +132,36 @@ type LogoBackground = "white" | "nonWhite";
 
 function LogoLockup({
   background = "white",
+  light,
   scale = 1.5,
 }: {
   background?: LogoBackground;
+  light?: boolean; // compat: light=false equivale a fondo no blanco
   scale?: number;
 }) {
+  const [failed, setFailed] = useState(false);
+  const bg: LogoBackground = light === false ? "nonWhite" : background;
   const logoSrc =
-    background === "white"
+    bg === "white"
       ? "/GF-Logo-Horizontal-Calado.png"
       : "/GF-Logo-Horizontal-Fondo-Calado.png";
+  const fg = bg === "white" ? "#ffffff" : C.blue;
 
+  // Respaldo: si el PNG no está en public/, muestra el wordmark en texto
+  if (failed) {
+    return (
+      <span style={{ color: fg, fontWeight: 800, letterSpacing: 3, fontSize: 13 * scale }}>
+        GOLD&nbsp;&nbsp;FIELDS
+      </span>
+    );
+  }
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <img
         src={logoSrc}
         alt="Gold Fields"
-        style={{
-          height: 34 * scale,
-          width: "auto",
-          display: "block",
-          objectFit: "contain",
-        }}
+        onError={() => setFailed(true)}
+        style={{ height: 34 * scale, width: "auto", display: "block", objectFit: "contain" }}
       />
     </div>
   );
@@ -418,7 +428,7 @@ function MaterialDetail({ m, onClose, onVerMapa }: { m:Material; onClose:()=>voi
 }
 
 // ---------------- TARJETA DE META ----------------
-function MetaCard({ name, kg, meta, color, glyph }: { name:string; kg:number; meta:number; color:string; glyph?:string }) {
+function MetaCard({ name, kg, meta, glyph }: { name:string; kg:number; meta:number; color?:string; glyph?:string }) {
   const pct = Math.round((kg / meta) * 100);
   const done = pct >= 100;
   return (
@@ -441,7 +451,42 @@ function MetaCard({ name, kg, meta, color, glyph }: { name:string; kg:number; me
 }
 
 // ---------------- APP ----------------
-export default function App() {
+// ---------------- ERROR BOUNDARY (diagnóstico en pantalla) ----------------
+type EBState = { error: Error | null };
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, EBState> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ minHeight: "100vh", background: "#001d39", color: "#fff", padding: 28,
+          fontFamily: "sans-serif", display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center", gap: 14, textAlign: "center" }}>
+          <div style={{ fontSize: 38 }}>!</div>
+          <div style={{ fontWeight: 800, fontSize: 20 }}>Ciclo - Error al cargar</div>
+          <div style={{ background: "rgba(255,255,255,.1)", padding: 16, borderRadius: 10,
+            fontSize: 12, maxWidth: 480, width: "100%", wordBreak: "break-word" }}>
+            {this.state.error.message}
+          </div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", maxWidth: 480, wordBreak: "break-word" }}>
+            {this.state.error.stack?.split("\n").slice(0, 4).join(" | ")}
+          </div>
+          <button onClick={() => window.location.reload()} style={{ background: "#00b398",
+            border: "none", color: "#fff", padding: "10px 22px", borderRadius: 10,
+            cursor: "pointer", fontWeight: 700 }}>Reintentar</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function AppInner() {
   const [tab, setTab] = useState<"resumen"|"materiales"|"metas"|"mapa">("resumen");
   const [detail, setDetail] = useState<Material | null>(null);
   const [selMat, setSelMat] = useState<string | null>(null);
@@ -685,5 +730,13 @@ export default function App() {
         <MaterialDetail m={detail} onClose={() => setDetail(null)} onVerMapa={() => { setSelMat(detail.id); setTab("mapa"); setDetail(null); }} />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppInner />
+    </ErrorBoundary>
   );
 }
