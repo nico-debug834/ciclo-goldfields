@@ -9,7 +9,10 @@ import { useEffect, useRef, useState } from "react";
   Marca según "Gold Fields Brand CI". El emblema del león es un MARCADOR (usar artwork oficial).
 */
 
-const PLANO = "/plano-planta.jpg"; // public/
+// Prefijo base: "/" en Vercel/Netlify, "/ciclo-goldfields/" en GitHub Pages.
+const BASE = import.meta.env.BASE_URL;
+const asset = (p: string) => BASE + p.replace(/^\//, "");
+const PLANO = asset("plano-planta.jpg");
 
 const C = {
   blue: "#001d39", blue2: "#0a2c4d", gold: "#c8a064", teal: "#00b398",
@@ -139,8 +142,8 @@ function LogoLockup({
 }) {
   const logoSrc =
     background === "white"
-      ? "/GF-Logo-Horizontal-Calado.png"
-      : "/GF-Logo-Horizontal-Fondo-Calado.png";
+      ? asset("GF-Logo-Horizontal-Calado.png")
+      : asset("GF-Logo-Horizontal-Fondo-Calado.png");
 
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
