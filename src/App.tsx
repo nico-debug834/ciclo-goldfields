@@ -84,6 +84,14 @@ const PUNTOS: Punto[] = [
   { id:"P8", name:"Truck Shop ICV",   px:0, py:42, materials:["tyre","raee","plastic","carton"] },
 ];
 
+// ---------------- DONACIONES (mock) ----------------
+type Donation = { id:string; material:string; recipient:string; date:string; qty:string; photo:string; note?:string };
+const DONATIONS: Donation[] = [
+  { id:"don1", material:"Madera / pallets", recipient:"Comunidad local (editar)",
+    date:"05/09/2025", qty:"\u2248 2.000 kg", photo: asset("donacion-madera-1.jpg"),
+    note:"Pallets de madera recuperados y entregados para su reutilización." },
+];
+
 // ---------------- UTILIDADES ----------------
 const fmt = (n: number) => Math.round(n).toLocaleString("es-CL");
 const fmt1 = (n: number) => (Math.round(n * 10) / 10).toLocaleString("es-CL");
@@ -252,6 +260,7 @@ function Masthead({ tab }: { tab:string }) {
     materiales: ["Materiales","Ruta y naturaleza de cada residuo"],
     metas:      ["Metas","Avance frente a nuestras metas"],
     mapa:       ["Mapa","Puntos de reciclaje en planta"],
+    donaciones: ["Donaciones","Materiales entregados a la comunidad"],
   };
   const [script, title] = titles[tab];
   return (
@@ -481,7 +490,7 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, EBSta
 }
 
 function AppInner() {
-  const [tab, setTab] = useState<"resumen"|"materiales"|"metas"|"mapa">("resumen");
+  const [tab, setTab] = useState<"resumen"|"materiales"|"metas"|"mapa"|"donaciones">("resumen");
   const [detail, setDetail] = useState<Material | null>(null);
   const [selMat, setSelMat] = useState<string | null>(null);
   const [confettiKey, setConfettiKey] = useState(0);
@@ -500,6 +509,7 @@ function AppInner() {
   const NAV = [
     { k:"resumen", label:"Resumen" }, { k:"materiales", label:"Materiales" },
     { k:"metas", label:"Metas" }, { k:"mapa", label:"Mapa" },
+    { k:"donaciones", label:"Donaciones" },
   ] as const;
 
   return (
@@ -636,11 +646,6 @@ function AppInner() {
                 </div>
               </div>
 
-              <div style={{ marginTop:24, background:C.blue, borderRadius:16, padding:22, position:"relative", overflow:"hidden" }}>
-                <div style={{ position:"absolute", inset:8, border:"1px solid rgba(255,255,255,.3)", borderTopLeftRadius:18, pointerEvents:"none" }} />
-                <div style={{ fontFamily:"'Segoe Script','Brush Script MT',cursive", color:C.gold, fontSize:20 }}>Our Purpose</div>
-                <div style={{ color:"#fff", fontWeight:700, fontSize:18 }}>Creating enduring value beyond mining</div>
-              </div>
             </>
           )}
 
@@ -713,6 +718,45 @@ function AppInner() {
               <PlantMap selMat={selMat} />
             </>
           )}
+
+          {/* ---- DONACIONES ---- */}
+          {tab === "donaciones" && (
+            <>
+              <p style={{ fontSize:13, color:C.ink, margin:"0 0 16px" }}>
+                Materiales recuperados que entregamos a la comunidad para su reutilización.
+              </p>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))", gap:14 }}>
+                {DONATIONS.map((dn) => (
+                  <div key={dn.id} style={{ background:C.card, border:"1px solid "+C.line, borderRadius:16, overflow:"hidden" }}>
+                    <div style={{ position:"relative", paddingTop:"75%", background:"#e9eef2" }}>
+                      <img src={dn.photo} alt={"Donación de "+dn.material}
+                        style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+                      <span style={{ position:"absolute", left:10, top:10, background:C.teal, color:"#fff",
+                        fontSize:11, fontWeight:700, padding:"3px 10px", borderRadius:20 }}>{dn.material}</span>
+                    </div>
+                    <div style={{ padding:16 }}>
+                      <div style={{ fontSize:11, color:C.ink }}>Donado a</div>
+                      <div style={{ fontWeight:800, color:C.blue, fontSize:16, marginBottom:12 }}>{dn.recipient}</div>
+                      <div style={{ display:"flex", justifyContent:"space-between" }}>
+                        <div><div style={{ color:C.ink, fontSize:11 }}>Fecha</div><strong style={{ color:C.blue, fontSize:14 }}>{dn.date}</strong></div>
+                        <div style={{ textAlign:"right" }}><div style={{ color:C.ink, fontSize:11 }}>Cantidad</div><strong style={{ color:C.blue, fontSize:14 }}>{dn.qty}</strong></div>
+                      </div>
+                      {dn.note && <div style={{ marginTop:12, fontSize:12, color:C.ink }}>{dn.note}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Franja de propósito · persistente en todas las secciones */}
+        <div style={{ padding:"0 16px 20px" }}>
+          <div style={{ background:C.blue, borderRadius:16, padding:22, position:"relative", overflow:"hidden" }}>
+            <div style={{ position:"absolute", inset:8, border:"1px solid rgba(255,255,255,.3)", borderTopLeftRadius:18, pointerEvents:"none" }} />
+            <div style={{ fontFamily:"'Segoe Script','Brush Script MT',cursive", color:C.gold, fontSize:20 }}>Our Purpose</div>
+            <div style={{ color:"#fff", fontWeight:700, fontSize:18 }}>Creating enduring value beyond mining</div>
+          </div>
         </div>
 
         <div style={{ padding:"16px", borderTop:"1px solid "+C.line, background:"#fff", display:"flex", justifyContent:"space-between", flexWrap:"wrap", gap:8, fontSize:11, color:"#9aa6b2" }}>
