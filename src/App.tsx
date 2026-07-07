@@ -87,7 +87,7 @@ const PUNTOS: Punto[] = [
 // ---------------- DONACIONES (mock) ----------------
 type Donation = { id:string; material:string; recipient:string; date:string; qty:string; photo:string; note?:string };
 const DONATIONS: Donation[] = [
-  { id:"don1", material:"Madera / pallets", recipient:"Comunidad local (editar)",
+  { id:"don1", material:"Madera / pallets", recipient:"Comunidad local",
     date:"05/09/2025", qty:"\u2248 2.000 kg", photo: asset("donacion-madera-1.jpg"),
     note:"Pallets de madera recuperados y entregados para su reutilización." },
 ];
